@@ -136,16 +136,15 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- NEW: Market Regime Column -->
-                <DataGridTextColumn Header="Market Regime" Binding="{Binding MarketRegime}" Width="*"/>
+                <!-- UPDATED: Changed MarketRegime to IntradayContext -->
+                <DataGridTextColumn Header="Intraday Context" Binding="{Binding IntradayContext}" Width="*"/>
 
-                <!-- NEW: Institutional Intent Column -->
                 <DataGridTextColumn Header="Institutional Intent" Binding="{Binding InstitutionalIntent}" Width="1.5*"/>
 
-                <DataGridTemplateColumn Header="Signal" Width="*">
+                <DataGridTemplateColumn Header="Signal / Playbook" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding FinalTradeSignal}" VerticalAlignment="Center" Padding="10,5">
+                            <TextBlock Text="{Binding FinalTradeSignal}" VerticalAlignment="Center" Padding="10,5" TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontWeight" Value="Bold"/>
@@ -156,7 +155,7 @@
                                             <DataTrigger Binding="{Binding FinalTradeSignal, Converter={StaticResource ValueToSignConverter}, ConverterParameter=ContainsBearish}" Value="True">
                                                 <Setter Property="Foreground" Value="#FFF44336"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding FinalTradeSignal}" Value="Neutral / No Edge">
+                                            <DataTrigger Binding="{Binding ConvictionScore}" Value="0">
                                                 <Setter Property="Foreground" Value="Gray"/>
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -167,7 +166,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Conviction Score" Width="1.5*">
+                <DataGridTemplateColumn Header="Conviction" Width="1.5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid VerticalAlignment="Center" Margin="10,0">
@@ -193,63 +192,13 @@
                 <DataTemplate>
                     <Border Background="#FF333337" Padding="20" Margin="12,0,12,10" CornerRadius="5"
                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0">
-                                <!-- Bullish Drivers -->
-                                <TextBlock Text="Bullish Drivers" FontWeight="Bold" Foreground="#FF4CAF50" FontSize="14"
-                                           Visibility="{Binding BullishDrivers.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
-                                <ItemsControl ItemsSource="{Binding BullishDrivers}" Margin="0,5,0,0"
-                                              Visibility="{Binding BullishDrivers.Count, Converter={StaticResource CountToVisibilityConverter}}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" Foreground="LightGreen" TextWrapping="Wrap" Margin="0,2"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                        <!-- UPDATED: Replaced Drivers with Market Narrative -->
+                        <StackPanel>
+                            <TextBlock Text="Market Narrative" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                            <TextBlock Text="{Binding MarketNarrative}" Foreground="LightGray" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                        </StackPanel>
 
-                                <!-- Bearish Drivers -->
-                                <TextBlock Text="Bearish Drivers" FontWeight="Bold" Foreground="#FFF44336" FontSize="14" Margin="0,15,0,0"
-                                           Visibility="{Binding BearishDrivers.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
-                                <ItemsControl ItemsSource="{Binding BearishDrivers}" Margin="0,5,0,0"
-                                              Visibility="{Binding BearishDrivers.Count, Converter={StaticResource CountToVisibilityConverter}}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" Foreground="#FFFF8A80" TextWrapping="Wrap" Margin="0,2"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-
-                            <!-- NEW: Trade Parameters Section -->
-                            <Border Grid.Column="1" Background="#FF2D2D30" CornerRadius="5" Padding="15" Margin="20,0,0,0"
-                                    Visibility="{Binding StopLoss, Converter={StaticResource ValueToSignConverter}, ConverterParameter=IsPositive}">
-                                <StackPanel>
-                                    <TextBlock Text="Trade Parameters" FontWeight="Bold" FontSize="14" Foreground="White" Margin="0,0,0,10"/>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Target:" Foreground="LightGray" Margin="0,0,10,5"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding TargetPrice, StringFormat=N2}" Foreground="#FF4CAF50" FontWeight="Bold"/>
-
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Stop-Loss:" Foreground="LightGray" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding StopLoss, StringFormat=N2}" Foreground="#FFF44336" FontWeight="Bold"/>
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-
-                        </Grid>
                     </Border>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
